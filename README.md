@@ -3,8 +3,11 @@
 
 
 **Project Components**
+
 -process_data.py: Extracts, cleans, and transforms data for modeling.
+
 -train_classifier.py: Trains a machine learning model using the cleaned data.
+
 -run.py: A Flask web app that allows users to input messages and view category predictions.
 
 
