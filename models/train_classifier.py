@@ -16,6 +16,15 @@ from sklearn.metrics import classification_report
 import pickle
 
 def load_data(database_filepath):
+    """
+    INPUT:
+    database_filepath - with table data which we created in process_data.py file
+    
+    OUTPUT:
+    X - messages (input variable) 
+    y - categories of the messages (output variable)
+    category_names - category name for y
+    """
     engine = create_engine('sqlite:///' + database_filepath)
     df = pd.read_sql_table('disaster_data', engine)
     X = df['message']
@@ -24,6 +33,13 @@ def load_data(database_filepath):
     return X, y, category_names
 
 def tokenize(text):
+    """
+    INPUT:
+    text - raw text
+    
+    OUTPUT:
+    clean_tokens - tokenized messages
+    """
     stop_words=set(stopwords.words('english'))
     lemmatizer= WordNetLemmatizer()
     tokens = [lemmatizer.lemmatize(word) for word in word_tokenize(text.lower()) if word not in stop_words]
@@ -31,6 +47,12 @@ def tokenize(text):
     return tokens
 
 def build_model():
+    """
+    INPUT:
+    None
+    OUTPUT:
+    cv = ML model pipeline after performing grid search with best suitable hyperparameters
+    """
     pipeline = Pipeline([
     ('vect',CountVectorizer(tokenizer=tokenize)),
     ('tfid', TfidfTransformer()),
@@ -48,6 +70,16 @@ def build_model():
     return cv
     
 def evaluate_model(model, X_test, Y_test, category_names):
+    """
+    INPUT:
+    model - Model created using GridSearchCV 
+    X_test - test messages splitted based on model_selection train_test_split
+    y_test - categories for test messages
+    category_names - category name for y
+    
+    OUTPUT:
+    none - print scores (precision, recall, f1-score) for each output category of the dataset.
+    """
     Y_pred_test = model.predict(X_test)
     for idx, col in enumerate(Y_test.columns):
         print(f"Metrics for {col}:")
@@ -55,6 +87,14 @@ def evaluate_model(model, X_test, Y_test, category_names):
     
 
 def save_model(model, model_filepath):
+    """
+    INPUT:
+    model - ML model
+    model_filepath - location to save the model
+    
+    OUTPUT:
+    none
+    """
     with open(model_filepath, 'wb') as f:
         pickle.dump(model, f)
 
