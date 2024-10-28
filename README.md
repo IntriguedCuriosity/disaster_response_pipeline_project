@@ -28,16 +28,16 @@
 
 **Instructions**
 -Run ETL Pipeline: Process and clean data.
-
->python process_data.py data/disaster_messages.csv data/disaster_categories.csv data/DisasterResponse.db
+- go to data directory 
+>python process_data.py disaster_messages.csv disaster_categories.csv DisasterResponse.db
 
 **Train ML Model:**
-
->python train_classifier.py data/DisasterResponse.db models/classifier.pkl
+- you can go to models directory and run below command:
+>python train_classifier.py ../data/DisasterResponse.db classifier.pkl
 
 
 **Run the Web App:**
-
+- go to app directory:
 >python run.py
 
 
