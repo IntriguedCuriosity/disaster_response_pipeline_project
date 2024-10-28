@@ -17,30 +17,40 @@
  
 
 **File Descriptions**
+
 -process_data.py: Loads messages and categories, merges datasets, and cleans the data.
+
 -train_classifier.py: Builds a model pipeline, trains, and tunes the model using GridSearchCV.
+
 -run.py: Launches a web interface for disaster response predictions.
+
 
 
 **Instructions**
 -Run ETL Pipeline: Process and clean data.
+
 >python process_data.py data/disaster_messages.csv data/disaster_categories.csv data/DisasterResponse.db
 
 **Train ML Model:**
+
 >python train_classifier.py data/DisasterResponse.db models/classifier.pkl
 
 
 **Run the Web App:**
+
 >python run.py
 
 
 -Access the web app at:
+
 http://0.0.0.0:3000.
 
 **Visualizations**
+
 -The web app provides visual insights into genre and category distributions. Suggestions for further visualizations include:
 
 -**Word Cloud** for frequently appearing words.
+
 -**Heatmap** of category correlations.
 
 
