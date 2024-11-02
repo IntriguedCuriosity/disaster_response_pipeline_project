@@ -72,6 +72,17 @@ http://0.0.0.0:3001.
 ![Uploading image.png…]()
 
 
+- One of the major concerns that i would like to point here is the imbalanced dataset, in this project we have some labels (e.g., "water") with far fewer examples than others, it poses challenges for training the model effectively. Lets try to understand the drawbacks and how can we overcome it:
+-  The model tends to perform well on majority classes (labels with more samples) but struggles with minority classes. This happens because the model “learns” to prioritize predictions for classes it sees more often, leading to lower accuracy for underrepresented labels. Tuning the hyperparameters would be very helpful to handle these, for example using scoring param with f1_weighted:
+--  cv = GridSearchCV(pipeline, param_grid=parameters, scoring='f1_weighted', cv=5)
+   --And we need to consider optimizing the F1 score, which balances precision and recall, especially in categories where both false positives and false negatives have adverse effects.
+
+
+- You can play with the code of train_classifier.py to play with several other params, that would help us in creating a robust model.
+
 
 **License**
 MIT License
+
+
+
