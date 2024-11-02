@@ -49,9 +49,24 @@ http://0.0.0.0:3001.
 
 -The web app provides visual insights into genre and category distributions. Suggestions for further visualizations include:
 
--**Word Cloud** for frequently appearing words.
+-**Distribution of Message Genres**.
+<img width="834" alt="image" src="https://github.com/user-attachments/assets/979f6d43-e937-412d-ab1a-772185222b30">
 
--**Heatmap** of category correlations.
+
+-**Distribution of Message Categories**.
+<img width="814" alt="image" src="https://github.com/user-attachments/assets/ee2a307c-5954-4697-a011-96e8be08811c">
+
+
+-**Top 5 categories of Genres**
+<img width="849" alt="image" src="https://github.com/user-attachments/assets/d670e786-12c5-4140-ab70-bf860ce9dc92">
+
+
+-**Pie chart of Percentage of Messages Per Category**
+<img width="795" alt="image" src="https://github.com/user-attachments/assets/ad17bae1-d4bc-4ccc-8c70-797b693cac57">
+
+
+![Uploading image.png…]()
+
 
 
 **License**
