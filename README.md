@@ -69,7 +69,14 @@ http://0.0.0.0:3001.
 <img width="795" alt="image" src="https://github.com/user-attachments/assets/ad17bae1-d4bc-4ccc-8c70-797b693cac57">
 
 
-![Uploading image.png…]()
+
+
+- at the top you will find the input space, where you can put any prompt that you would feel someone would send as a message. Could be information, request, a panic alert, weather alert, and our classifier would predict what kind of message was it based on which we can identify the next steps, below is the sample image:
+
+- <img width="880" alt="image" src="https://github.com/user-attachments/assets/24aa390c-8a35-4d37-9472-34af9823c866">
+  ![Uploading image.png…]()
+
+
 
 
 - One of the major concerns that i would like to point here is the imbalanced dataset, in this project we have some labels (e.g., "water") with far fewer examples than others, it poses challenges for training the model effectively. Lets try to understand the drawbacks and how can we overcome it:
