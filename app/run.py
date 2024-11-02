@@ -11,6 +11,9 @@ from plotly.graph_objs import Bar
 #from sklearn.externals import joblib
 import joblib
 from sqlalchemy import create_engine
+import gzip
+import pickle
+import bz2
 
 
 app = Flask(__name__)
@@ -31,7 +34,9 @@ engine = create_engine('sqlite:///../data/DisasterResponse.db')
 df = pd.read_sql_table('response_table', engine)
 
 # load model
-model = joblib.load("../models/classifier.pkl")
+#model = joblib.load("../models/classifier.pkl")
+with bz2.BZ2File("../models/classifier.pkl.bz2", 'rb') as f:
+    model = pickle.load(f)
 
 
 # index webpage displays cool visuals and receives user input text for model
