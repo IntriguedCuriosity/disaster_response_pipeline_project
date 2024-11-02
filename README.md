@@ -29,11 +29,14 @@
 **Instructions**
 -Run ETL Pipeline: Process and clean data.
 - from the home directory of your code package run below.
->python data/process_data.py data/disaster_messages.csv data/disaster_categories.csv data/DisasterResponse.db
+> python data/process_data.py data/disaster_messages.csv data/disaster_categories.csv data/DisasterResponse.db
 
 **Train ML Model:**
 - from the home directory of the repository you can run the below command:
-> python models/train_classifier.py data/DisasterResponse.db models/classifier.pkl
+> python models/train_classifier.py data/DisasterResponse.db models/classifier.pkl.bz2
+
+-- You would see that the classifier is with bz2 extension because github does not allow files with size > 100mb and our tuned model with efficient grid search was always crossing 100mb so, in the code it self we are zipping and unzipping the classifer.
+
 
 
 **Run the Web App:**
@@ -44,6 +47,7 @@
 -Access the web app at:
 
 http://0.0.0.0:3001.
+- if there is an error that the port is not available on your local machine, you could choose any other like 5000/5001/6000
 
 **Visualizations**
 
