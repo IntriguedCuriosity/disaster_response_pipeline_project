@@ -90,6 +90,42 @@ def index():
 
     ]
 
+    top_categories = category_counts.sort_values(ascending=False).head(5).index
+    genre_category_counts = df.groupby('genre')[top_categories].sum()
+
+    graphs.append({
+        'data': [
+            Bar(
+                x=genre_category_counts.index,
+                y=genre_category_counts[category],
+                name=category
+            ) for category in top_categories
+            ],
+        'layout': {
+            'title': 'Top 5 Categories by Genre',
+            'barmode': 'stack',
+            'yaxis': {
+                'title': "Count"
+            },
+            'xaxis': {
+                'title': "Genre"
+                }
+            }
+        })
+    graphs.append({
+        'data': [
+            {
+                'type': 'pie',
+                'labels': category_names,
+                'values': category_counts,
+                'textinfo': 'percent',
+                'hoverinfo': 'label+value'
+            }
+        ],
+        'layout': {
+            'title': 'Percentage of Messages per Category'
+        }
+    })
     # encode plotly graphs in JSON
     ids = ["graph-{}".format(i) for i, _ in enumerate(graphs)]
     graphJSON = json.dumps(graphs, cls=plotly.utils.PlotlyJSONEncoder)
