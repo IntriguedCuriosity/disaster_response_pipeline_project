@@ -1,95 +1,98 @@
 import sys
 import pandas as pd
-import numpy as np
 from sqlalchemy import create_engine
 
 def load_data(messages_filepath, categories_filepath):
     """
-    INPUT:
-    messages_filepath - path to messages csv file
-    categories_filepath - path to categories csv file
-    
-    OUTPUT:
-    df - Merged data of the input files
-    """
-    messages = pd.read_csv(messages_filepath)
-    categories = pd.read_csv(categories_filepath)
-    df = pd.merge(messages, categories, how='inner', left_on='id', right_on='id')
-    return df
+    Load and merge messages and categories datasets.
 
+    Parameters:
+    - messages_filepath (str): File path for the messages CSV.
+    - categories_filepath (str): File path for the categories CSV.
+
+    Returns:
+    - DataFrame: Merged DataFrame of messages and categories.
+    """
+    #converting all messages into dataframe from csv file
+    messages = pd.read_csv(messages_filepath)
+    #loading all categories into dataframe from csv file
+    categories = pd.read_csv(categories_filepath)
+    #function merges two DataFrames based on a key or multiple keys.
+    df = pd.merge(messages, categories, how='inner', left_on='id', right_on='id')
+
+    return df
 
 def clean_data(df):
     """
-    INPUT:
-    df - dataframe we created after merging categoreis and messages will be the input
-    
-    OUTPUT:
-    df - Cleaned data with added columns from categories column of categoreis file.
-    """
-    
-    # create dataframe of the 36 individual category columns
-    categories = df['categories'].str.split(pat=';', expand = True)
-    # select the first row of the categories dataframe
-    row = categories.iloc[0]
-    # use this row to extract a list of new column names for categories
-    category_colnames = row.apply(lambda item: item.split('-')[0])
-    # rename the columns of 'categories'
-    categories.columns = category_colnames
-    # convert category values to just numbers 0 or 1
-    for column in categories:
-        # set each value to be the last character of the string
-        categories[column] = categories[column].apply(lambda item: item.split('-')[1])
-        # convert column from string to numeric
-        categories[column] = categories[column].astype(int)
-    
-    # drop the original categories column from 'df'
-    df.drop(columns='categories', inplace=True, errors='raise', axis=1)
-    # concatenate the original datafram with the new 'categories' dataframe
-    df = pd.concat([df, categories], axis = 1)
-    # drop duplicates
-    df.drop_duplicates(inplace = True)
-    df['related'] = df['related'].map(lambda x: 1 if x==2 else x)
-    return df
+    Clean merged DataFrame by splitting categories and removing duplicates.
 
+    Parameters:
+    - df (DataFrame): Merged DataFrame containing messages and categories.
+
+    Returns:
+    - DataFrame: Cleaned DataFrame with separate category columns.
+    """
+    # Split categories into separate columns
+    # converting each column value into a string and then spliting based on -, which returns a Series.
+    categories = df['categories'].str.split(';', expand=True)
+
+    # Extract category names from the first row of data
+    category_colnames = categories.iloc[0].apply(lambda x: x.split('-')[0])
+    categories.columns = category_colnames
+
+    # Convert category values to 0 or 1, we will handle non 1/0 values later for one column
+    for column in categories:
+        categories[column] = categories[column].str[-1].astype(int)
+
+    # Drop original categories column and merge new category columns
+    df.drop('categories', axis=1, inplace=True)
+    df = pd.concat([df, categories], axis=1)
+
+    # Remove duplicates, we can either drop it from the main directly or use another variable to refer a new df with
+    # dropped duplicate columns liek new_df=df.drop_duplicates()
+    df.drop_duplicates(inplace=True)
+
+    # Replace '2' with '1' in 'related' column due to data inconsistency
+    df['related'] = df['related'].map(lambda x: 1 if x == 2 else x)
+    return df
 
 def save_data(df, database_filename):
     """
-    INPUT:
-    df - cleaned data
-    database_filename - database filename for sqlite database with (.db) file type
-    
-    OUTPUT:
-    None - save cleaned data into sqlite database
-    """
-    engine = create_engine('sqlite:///'+ database_filename)
-    df.to_sql('disaster_data', engine, index = False, if_exists = 'replace')
+    Save cleaned data to SQLite database.
 
+    Parameters:
+    - df (DataFrame): Cleaned data.
+    - database_filename (str): Filename for the SQLite database.
+
+    Returns:
+    - None: Saves the DataFrame into an SQLite database.
+    """
+    #utilzing the code provided in jupyter notebook, adding important parameters:
+    # engine is refering to the param con=engine, it is basically SQLAlchemy engine that connects to the database
+    # index=False, argument prevents the df's index from being written as a column in the SQL table
+    # if_exists='replace', parameter specifies what to do if a table with the same name already exists.
+    engine = create_engine('sqlite:///' + database_filename)
+    df.to_sql('response_table', engine, index=False, if_exists='replace')
 
 def main():
     if len(sys.argv) == 4:
-
         messages_filepath, categories_filepath, database_filepath = sys.argv[1:]
 
-        print('Loading data...\n    MESSAGES: {}\n    CATEGORIES: {}'
-              .format(messages_filepath, categories_filepath))
+        print(f'Loading data...\n    MESSAGES: {messages_filepath}\n    CATEGORIES: {categories_filepath}')
         df = load_data(messages_filepath, categories_filepath)
 
         print('Cleaning data...')
         df = clean_data(df)
-        
-        print('Saving data...\n    DATABASE: {}'.format(database_filepath))
-        save_data(df, database_filepath)
-        
-        print('Cleaned data saved to database!')
-    
-    else:
-        print('Please provide the filepaths of the messages and categories '\
-              'datasets as the first and second argument respectively, as '\
-              'well as the filepath of the database to save the cleaned data '\
-              'to as the third argument. \n\nExample: python process_data.py '\
-              'disaster_messages.csv disaster_categories.csv '\
-              'DisasterResponse.db')
 
+        print(f'Saving data...\n    DATABASE: {database_filepath}')
+        save_data(df, database_filepath)
+
+        print('Cleaned data saved to database!')
+
+    else:
+        print('Please provide the file paths for the messages and categories datasets as the first and second arguments, respectively,'
+              ' as well as the file path for the database to save the cleaned data as the third argument. \n\nExample: python process_data.py '
+              'disaster_messages.csv disaster_categories.csv DisasterResponse.db')
 
 if __name__ == '__main__':
     main()
