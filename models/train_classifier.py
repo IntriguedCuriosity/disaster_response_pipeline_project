@@ -90,7 +90,7 @@ def build_model():
 
 
     #size of pickle file generated post model creation was 1GB due to which the github uploade was failing
-    #as the limit is of 100MB size per file on github, so took different steps to 
+    #as the limit is of 100MB size per file on github, so took different steps to
     #have the same efficiency & reduce the size
     # removed estimators 100 which is usually the tree size.
     #A smaller number of trees can reduce the model size without significantly affecting performance
@@ -134,7 +134,7 @@ def save_model(model, model_filepath):
     Returns:
     - None: Saves model to specified filepath.
     """
-    #another step taken to reduce the pickle size by 
+    #another step taken to reduce the pickle size by
     #Remove training data references
     #used del to remove large, unnecessary attributes here (cv.best_estimator_._estimators_).
     if hasattr(model, 'best_estimator_') and hasattr(model.best_estimator_, '_estimators_'):
