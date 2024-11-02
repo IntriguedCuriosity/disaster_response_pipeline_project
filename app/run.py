@@ -8,7 +8,8 @@ from nltk.tokenize import word_tokenize
 from flask import Flask
 from flask import render_template, request, jsonify
 from plotly.graph_objs import Bar
-from sklearn.externals import joblib
+#from sklearn.externals import joblib
+import joblib
 from sqlalchemy import create_engine
 
 
@@ -27,7 +28,7 @@ def tokenize(text):
 
 # load data
 engine = create_engine('sqlite:///../data/DisasterResponse.db')
-df = pd.read_sql_table('disaster_data', con= engine)
+df = pd.read_sql_table('response_table', engine)
 
 # load model
 model = joblib.load("../models/classifier.pkl")
@@ -37,15 +38,15 @@ model = joblib.load("../models/classifier.pkl")
 @app.route('/')
 @app.route('/index')
 def index():
-    
+
     # extract data needed for visuals
     # TODO: Below is an example - modify to extract data for your own visuals
     genre_counts = df.groupby('genre').count()['message']
     genre_names = list(genre_counts.index)
-    
+
     category_names = df.iloc[:, 4:].columns
     category_counts = (df.iloc[:, 4:]!=0).sum()
-    
+
     # create visuals
     # TODO: Below is an example - modify to create your own visuals
     graphs = [
@@ -67,7 +68,7 @@ def index():
                 }
             }
         },
-        
+
         {
             'data': [
                 Bar(
@@ -86,13 +87,49 @@ def index():
                 }
             }
         }
-        
+
     ]
-    
+
+    top_categories = category_counts.sort_values(ascending=False).head(5).index
+    genre_category_counts = df.groupby('genre')[top_categories].sum()
+
+    graphs.append({
+        'data': [
+            Bar(
+                x=genre_category_counts.index,
+                y=genre_category_counts[category],
+                name=category
+            ) for category in top_categories
+            ],
+        'layout': {
+            'title': 'Top 5 Categories by Genre',
+            'barmode': 'stack',
+            'yaxis': {
+                'title': "Count"
+            },
+            'xaxis': {
+                'title': "Genre"
+                }
+            }
+        })
+    graphs.append({
+        'data': [
+            {
+                'type': 'pie',
+                'labels': category_names,
+                'values': category_counts,
+                'textinfo': 'percent',
+                'hoverinfo': 'label+value'
+            }
+        ],
+        'layout': {
+            'title': 'Percentage of Messages per Category'
+        }
+    })
     # encode plotly graphs in JSON
     ids = ["graph-{}".format(i) for i, _ in enumerate(graphs)]
     graphJSON = json.dumps(graphs, cls=plotly.utils.PlotlyJSONEncoder)
-    
+
     # render web page with plotly graphs
     return render_template('master.html', ids=ids, graphJSON=graphJSON)
 
@@ -101,13 +138,13 @@ def index():
 @app.route('/go')
 def go():
     # save user input in query
-    query = request.args.get('query', '') 
+    query = request.args.get('query', '')
 
     # use model to predict classification for query
     classification_labels = model.predict([query])[0]
     classification_results = dict(zip(df.columns[4:], classification_labels))
 
-    # This will render the go.html Please see that file. 
+    # This will render the go.html Please see that file.
     return render_template(
         'go.html',
         query=query,
@@ -116,7 +153,7 @@ def go():
 
 
 def main():
-    app.run(host='0.0.0.0', port=3000, debug=True)
+    app.run(host='0.0.0.0', port=3001, debug=True)
 
 
 if __name__ == '__main__':

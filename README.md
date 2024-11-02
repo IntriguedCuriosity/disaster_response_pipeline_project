@@ -18,9 +18,9 @@
 
 **File Descriptions**
 
--process_data.py: Loads messages and categories, merges datasets, and cleans the data.
+-process_data.py: this file reads two CSV files, merges them, cleans the data, and then saves it to an SQLite database. you can get more details about every function by leveraging the docstrings.
 
--train_classifier.py: Builds a model pipeline, trains, and tunes the model using GridSearchCV.
+-train_classifier.py: this file loads data, tokenizes, builds a model, trains it, evaluates it, and then saves the trained model. We have utilized RandomForestClassifier as our classifier with detailed docstrings.
 
 -run.py: Launches a web interface for disaster response predictions.
 
@@ -28,30 +28,45 @@
 
 **Instructions**
 -Run ETL Pipeline: Process and clean data.
-- go to data directory 
->python process_data.py disaster_messages.csv disaster_categories.csv DisasterResponse.db
+- from the home directory of your code package run below.
+>python data/process_data.py data/disaster_messages.csv data/disaster_categories.csv data/DisasterResponse.db
 
 **Train ML Model:**
-- you can go to models directory and run below command:
->python train_classifier.py ../data/DisasterResponse.db classifier.pkl
+- from the home directory of the repository you can run the below command:
+> python models/train_classifier.py data/DisasterResponse.db models/classifier.pkl
 
 
 **Run the Web App:**
-- go to app directory:
+- go to app directory (cd app) and run below:
 >python run.py
 
 
 -Access the web app at:
 
-http://0.0.0.0:3000.
+http://0.0.0.0:3001.
 
 **Visualizations**
 
 -The web app provides visual insights into genre and category distributions. Suggestions for further visualizations include:
 
--**Word Cloud** for frequently appearing words.
+-**Distribution of Message Genres**.
+<img width="834" alt="image" src="https://github.com/user-attachments/assets/979f6d43-e937-412d-ab1a-772185222b30">
 
--**Heatmap** of category correlations.
+
+-**Distribution of Message Categories**.
+<img width="814" alt="image" src="https://github.com/user-attachments/assets/ee2a307c-5954-4697-a011-96e8be08811c">
+
+
+-**Top 5 categories of Genres**
+<img width="849" alt="image" src="https://github.com/user-attachments/assets/d670e786-12c5-4140-ab70-bf860ce9dc92">
+
+
+-**Pie chart of Percentage of Messages Per Category**
+<img width="795" alt="image" src="https://github.com/user-attachments/assets/ad17bae1-d4bc-4ccc-8c70-797b693cac57">
+
+
+![Uploading image.png…]()
+
 
 
 **License**
