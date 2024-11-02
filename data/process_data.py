@@ -14,7 +14,6 @@ def load_data(messages_filepath, categories_filepath):
     - DataFrame: Merged DataFrame of messages and categories.
     """
     #converting all messages into dataframe from csv file
->>>>>>> origin/master
     messages = pd.read_csv(messages_filepath)
     #loading all categories into dataframe from csv file
     categories = pd.read_csv(categories_filepath)
@@ -39,7 +38,6 @@ def clean_data(df):
 
     # Extract category names from the first row of data
     category_colnames = categories.iloc[0].apply(lambda x: x.split('-')[0])
->>>>>>> origin/master
     categories.columns = category_colnames
 
     # Convert category values to 0 or 1, we will handle non 1/0 values later for one column
