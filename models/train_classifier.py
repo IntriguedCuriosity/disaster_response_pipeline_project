@@ -13,6 +13,8 @@ from sklearn.pipeline import Pipeline, FeatureUnion
 from sklearn.multioutput import MultiOutputClassifier
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn.metrics import classification_report
+import gzip
+import bz2
 
 def load_data(database_filepath):
     """
@@ -87,15 +89,20 @@ def build_model():
     ])
 
 
-
+    #size of pickle file generated post model creation was 1GB due to which the github uploade was failing
+    #as the limit is of 100MB size per file on github, so took different steps to
+    #have the same efficiency & reduce the size
+    # removed estimators 100 which is usually the tree size.
+    #A smaller number of trees can reduce the model size without significantly affecting performance
+    #reduced the depth size as well
     parameters = {
-        'clf__estimator__n_estimators': [50, 100],
+        'clf__estimator__n_estimators': [None,50],
         'clf__estimator__min_samples_split': [2, 5]
     }
 
     #cv=5: Specifies that we want to use 5-fold cross-validation.
     #this param helps in breaking the dataset into multiple parts or "folds," and then the model is trained on some folds while being tested on others.
-    cv = GridSearchCV(pipeline, param_grid=parameters, cv=5, n_jobs=-1, verbose=3)
+    cv = GridSearchCV(pipeline, param_grid=parameters, cv=3, n_jobs=-1, verbose=2)
     return cv
 
 def evaluate_model(model, X_test, y_test, category_names):
@@ -127,8 +134,13 @@ def save_model(model, model_filepath):
     Returns:
     - None: Saves model to specified filepath.
     """
+    #another step taken to reduce the pickle size by
+    #Remove training data references
+    #used del to remove large, unnecessary attributes here (cv.best_estimator_._estimators_).
+    if hasattr(model, 'best_estimator_') and hasattr(model.best_estimator_, '_estimators_'):
+        del model.best_estimator_._estimators_
 
-    with open(model_filepath, 'wb') as f:
+    with  bz2.BZ2File(model_filepath, 'wb') as f:
         pickle.dump(model, f)
 
 
